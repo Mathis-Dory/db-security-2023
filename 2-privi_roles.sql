@@ -50,6 +50,31 @@ CREATE ROLE appcar_admin_role;
 
 -- Grant the privileges to the roles
 
+-- Grant the privileges to the employee role according to the entity user matrix
+GRANT SELECT ON APPCAR_FLEET_RESPONSIBLE.VEHICLES TO appcar_employee_role;
+GRANT SELECT ON APPCAR_FLEET_RESPONSIBLE.PRICINGS TO appcar_employee_role;
+GRANT SELECT, UPDATE ON APPCAR_ADMIN_APP.BOOKINGS TO appcar_employee_role;
+GRANT SELECT, UPDATE, DELETE ON APPCAR_ADMIN_APP.INVOICES TO appcar_employee_role;
+GRANT SELECT ON APPCAR_ADMIN_APP.RETURNS TO appcar_employee_role;
+GRANT SELECT, INSERT ON APPCAR_ADMIN_APP.CHECK_IN TO appcar_employee_role;
+GRANT SELECT, INSERT ON APPCAR_ADMIN_APP.CUSTOMERS TO appcar_employee_role;
+-- Create a special view to prevent the employees from seeing the passwords
+CREATE OR REPLACE VIEW APPCAR_ADMIN_APP.USERS_MGMT_VIEW AS
+    SELECT id, name, surname, sex, birthdate, email, id_customer, id_employee FROM APPCAR_ADMIN_APP.USERS;
+
+GRANT SELECT ON APPCAR_ADMIN_APP.USERS_MGMT_VIEW TO appcar_employee_role;
+
+-- Grant the privileges to the fleet responsible role according to the entity user matrix
+GRANT SELECT ON APPCAR_ADMIN_APP.STATES TO appcar_fleet_role;
+GRANT SELECT, UPDATE ON APPCAR_ADMIN_APP.BOOKINGS TO appcar_fleet_role;
+
+-- Grant the privileges to the HR role according to the entity user matrix
+GRANT SELECT, UPDATE(id, name, surname, sex, birthdate, email, id_customer, id_employee)
+    ON APPCAR_ADMIN_APP.USERS_MGMT_VIEW TO appcar_hr_role;
+GRANT INSERT, DELETE ON APPCAR_ADMIN_APP.USERS TO appcar_hr_role;
+
+
+
 
 -- Asssign the roles to the users
 GRANT appcar_admin_role TO appcar_admin_app;
@@ -105,4 +130,5 @@ END PROC_STATE;
 
 
 -- Grant the execute privilege to the employee role
-GRANT EXECUTE ON PROC_STATE TO employee_role;
+GRANT EXECUTE ON PROC_STATE TO appcar_employee_role;
+-- TODO: Test procedure
