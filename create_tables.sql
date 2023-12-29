@@ -1,25 +1,10 @@
--- The following script is the second step to create the application
+-- The following script is run by the user appcar_admin
 -- Author: Mathis Dory
 -- Date: 2023-12-26
 -- Group 510
 
 
--- Delete tables if they already exist
-
 SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
-
-BEGIN
-   FOR t IN (SELECT table_name FROM user_tables WHERE table_name IN ('USERS', 'CUSTOMERS', 'EMPLOYEES', 'STATES', 'VEHICLES', 'MODELS', 'PRICINGS', 'EQUIPMENTS', 'MODELS_EQUIPMENTS_PRICINGS', 'BOOKINGS', 'INVOICES', 'CHECK_IN', 'RETURNS'))
-   LOOP
-      EXECUTE IMMEDIATE 'DROP TABLE ' || t.table_name || ' CASCADE CONSTRAINTS';
-   END LOOP;
-EXCEPTION
-   WHEN OTHERS THEN
-      IF SQLCODE != -942 THEN
-         RAISE;
-      END IF;
-END;
-/
 
 
 -- Create tables for the project
@@ -32,7 +17,7 @@ CREATE TABLE CUSTOMERS
 );
 
 -- Employees table
-CREATE TABLE EMPLOYEES
+CREATE TABLE APPCAR_HR_MANAGER.EMPLOYEES
 (
     id         INT PRIMARY KEY,
     department VARCHAR2(100) NOT NULL CHECK (department IN ('hr', 'commercial', 'administrative'))
@@ -51,7 +36,7 @@ CREATE TABLE USERS
     id_customer INT,
     id_employee INT,
     FOREIGN KEY (id_customer) REFERENCES CUSTOMERS (id),
-    FOREIGN KEY (id_employee) REFERENCES EMPLOYEES (id)
+    FOREIGN KEY (id_employee) REFERENCES APPCAR_HR_MANAGER.EMPLOYEES (id)
 );
 
 -- States table
@@ -62,7 +47,7 @@ CREATE TABLE STATES
 );
 
 -- Models table
-CREATE TABLE MODELS
+CREATE TABLE APPCAR_FLEET_RESPONSIBLE.MODELS
 (
     id    INT PRIMARY KEY,
     name  VARCHAR2(100) NOT NULL,
@@ -71,7 +56,7 @@ CREATE TABLE MODELS
 );
 
 -- Pricings table
-CREATE TABLE PRICINGS
+CREATE TABLE APPCAR_FLEET_RESPONSIBLE.PRICINGS
 (
     id              INT PRIMARY KEY,
     daily_price     DECIMAL(10, 2) NOT NULL,
@@ -81,22 +66,22 @@ CREATE TABLE PRICINGS
 );
 
 -- Equipments table
-CREATE TABLE EQUIPMENTS
+CREATE TABLE APPCAR_FLEET_RESPONSIBLE.EQUIPMENTS
 (
     id   INT PRIMARY KEY,
     name VARCHAR2(100) NOT NULL
 );
 
 -- Models_equipments_pricings table
-CREATE TABLE MODELS_EQUIPMENTS_PRICINGS
+CREATE TABLE APPCAR_FLEET_RESPONSIBLE.MODELS_EQUIPMENTS_PRICINGS
 (
     id           INT PRIMARY KEY,
     id_equipment INT,
     id_model     INT NOT NULL,
     id_pricing   INT NOT NULL,
-    FOREIGN KEY (id_equipment) REFERENCES EQUIPMENTS (id),
-    FOREIGN KEY (id_model) REFERENCES MODELS (id),
-    FOREIGN KEY (id_pricing) REFERENCES PRICINGS (id)
+    FOREIGN KEY (id_equipment) REFERENCES APPCAR_FLEET_RESPONSIBLE.EQUIPMENTS (id),
+    FOREIGN KEY (id_model) REFERENCES APPCAR_FLEET_RESPONSIBLE.MODELS (id),
+    FOREIGN KEY (id_pricing) REFERENCES APPCAR_FLEET_RESPONSIBLE.PRICINGS (id)
 );
 
 -- Check-in table
@@ -115,9 +100,8 @@ CREATE TABLE RETURNS
     comments VARCHAR2(255)
 );
 
-
 -- Vehicles table
-CREATE TABLE VEHICLES
+CREATE TABLE APPCAR_FLEET_RESPONSIBLE.VEHICLES
 (
     id                 INT PRIMARY KEY,
     purchase_date      DATE           NOT NULL,
@@ -125,8 +109,8 @@ CREATE TABLE VEHICLES
     kilometrage        INT            NOT NULL,
     id_model_equipment INT            NOT NULL,
     id_state           INT            NOT NULL,
-    FOREIGN KEY (id_state) REFERENCES STATES (id),
-    FOREIGN KEY (id_model_equipment) REFERENCES MODELS_EQUIPMENTS_PRICINGS (id)
+    FOREIGN KEY (id_state) REFERENCES APPCAR_ADMIN_APP.STATES (id),
+    FOREIGN KEY (id_model_equipment) REFERENCES APPCAR_FLEET_RESPONSIBLE.MODELS_EQUIPMENTS_PRICINGS (id)
 );
 
 -- Bookings table
@@ -143,11 +127,10 @@ CREATE TABLE BOOKINGS
     id_return     INT,
     id_check_in   INT,
     FOREIGN KEY (id_customer) REFERENCES CUSTOMERS (id),
-    FOREIGN KEY (id_vehicle) REFERENCES VEHICLES (id),
+    FOREIGN KEY (id_vehicle) REFERENCES APPCAR_FLEET_RESPONSIBLE.VEHICLES (id),
     FOREIGN KEY (id_return) REFERENCES RETURNS (id),
     FOREIGN KEY (id_check_in) REFERENCES CHECK_IN (id)
 );
-
 
 -- Invoices table
 CREATE TABLE INVOICES

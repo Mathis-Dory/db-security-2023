@@ -15,28 +15,20 @@ SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
 -- Create the admin user of the application, the password expire is used to force the user to change the password at the first login
 -- This admin is a local user for the pluggable database orclpdb
 CREATE USER appcar_admin_app IDENTIFIED BY admin1234 password expire;
--- Grant the privileges to the admin user
-GRANT CREATE SESSION TO appcar_admin_app;
+
 
 -- Create an account for the responsible of the fleet
 CREATE USER appcar_fleet_responsible IDENTIFIED BY test1234 password expire;
-GRANT CREATE SESSION TO appcar_fleet_responsible;
 
 -- Create an account for the HR responsible
 CREATE USER appcar_hr_manager IDENTIFIED BY test1234 password expire;
-GRANT CREATE SESSION TO appcar_hr_manager;
 
 -- Create an account for the 5 employees of the commercial department
 CREATE USER appcar_employee_1 IDENTIFIED BY test1234 password expire;
-GRANT CREATE SESSION TO appcar_employee_1;
 CREATE USER appcar_employee_2 IDENTIFIED BY test1234 password expire;
-GRANT CREATE SESSION TO appcar_employee_2;
 CREATE USER appcar_employee_3 IDENTIFIED BY test1234 password expire;
-GRANT CREATE SESSION TO appcar_employee_3;
 CREATE USER appcar_employee_4 IDENTIFIED BY test1234 password expire;
-GRANT CREATE SESSION TO appcar_employee_4;
 CREATE USER appcar_employee_5 IDENTIFIED BY test1234 password expire;
-GRANT CREATE SESSION TO appcar_employee_5;
 
 
 SELECT username, AUTHENTICATION_TYPE, ACCOUNT_STATUS, to_char(EXPIRY_DATE, 'dd/mm/yyyy hh24:mi:ss') AS expiry_date_time,

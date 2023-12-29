@@ -8,6 +8,8 @@ SELECT name, open_mode FROM v$pdbs;
 
 -- Set the current container to the pluggable database
 ALTER SESSION SET CONTAINER = orclpdb;
+-- Set the current container to the root container
+ALTER SESSION SET CONTAINER = CDB$ROOT;
 
--- Check if we are in the pluggable database
-SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
+-- Open a database
+ALTER DATABASE OPEN;
