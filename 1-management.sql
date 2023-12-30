@@ -1,5 +1,5 @@
 -- The following script is the users and resources management script for the application
--- Run this script in the CDB with the System user
+-- Run this script from the CDB with the SYS user
 -- Author: Mathis Dory
 -- Date: 2023-12-27
 -- Group 510

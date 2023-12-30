@@ -1,9 +1,11 @@
--- The following script is run by the user appcar_admin
+-- The following script is run by the user appcar_admin_app in the PDB
 -- Author: Mathis Dory
 -- Date: 2023-12-26
 -- Group 510
 
 
+-- Switch to the PDB
+ALTER SESSION SET CONTAINER = orclpdb;
 SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
 
 

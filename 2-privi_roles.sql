@@ -1,5 +1,5 @@
 -- The following script is the roles and privileges script for the application
--- Run this script in the CDB with the System user
+-- Run this script from CDB with the SYS user
 -- Author: Mathis Dory
 -- Date: 2023-12-27
 -- Group 510
@@ -41,7 +41,6 @@ GRANT REFERENCES ON APPCAR_ADMIN_APP.STATES TO appcar_fleet_responsible;
 
 
 --+++++++ Create roles +++++++--
--- TODO: Add the privileges to the roles
 
 CREATE ROLE appcar_employee_role;
 CREATE ROLE appcar_fleet_role;
@@ -61,7 +60,6 @@ GRANT SELECT, INSERT ON APPCAR_ADMIN_APP.CUSTOMERS TO appcar_employee_role;
 -- Create a special view to prevent the employees from seeing the passwords
 CREATE OR REPLACE VIEW APPCAR_ADMIN_APP.USERS_MGMT_VIEW AS
     SELECT id, name, surname, sex, birthdate, email, id_customer, id_employee FROM APPCAR_ADMIN_APP.USERS;
-
 GRANT SELECT ON APPCAR_ADMIN_APP.USERS_MGMT_VIEW TO appcar_employee_role;
 
 -- Grant the privileges to the fleet responsible role according to the entity user matrix
@@ -89,7 +87,7 @@ GRANT appcar_employee_role TO appcar_employee_5;
 
 --+++++++ Procedure to allow employees to edit the state of a vehicle +++++++--
 
-CREATE OR REPLACE PROCEDURE PROC_STATE (
+CREATE OR REPLACE PROCEDURE appcar_proc_state (
     p_state_id INT,
     p_vehicle_id INT
 ) AUTHID CURRENT_USER AS
@@ -99,14 +97,14 @@ BEGIN
     -- First, check if the state_id exists
     SELECT COUNT(*)
     INTO v_state_count
-    FROM STATES
+    FROM APPCAR_ADMIN_APP.STATES
     WHERE id = p_state_id;
 
     IF v_state_count = 0 THEN
         RAISE_APPLICATION_ERROR(-20002, 'The provided state ID does not exist.');
     END IF;
     -- Update the state of the vehicle
-    UPDATE VEHICLES
+    UPDATE APPCAR_FLEET_RESPONSIBLE.VEHICLES
     SET id_state = p_state_id
     WHERE id = p_vehicle_id;
 
@@ -125,10 +123,14 @@ EXCEPTION
         -- Roll back any changes if an error occurs
         ROLLBACK;
         RAISE;
-END PROC_STATE;
+END appcar_proc_state;
 /
 
 
 -- Grant the execute privilege to the employee role
-GRANT EXECUTE ON PROC_STATE TO appcar_employee_role;
+GRANT EXECUTE ON appcar_proc_state TO appcar_employee_role;
+
+CALL appcar_proc_state();
+
+
 -- TODO: Test procedure
