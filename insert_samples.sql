@@ -50,26 +50,26 @@ INSERT INTO APPCAR_FLEET_RESPONSIBLE.MODELS_EQUIPMENTS_PRICINGS (id, id_equipmen
 INSERT INTO APPCAR_FLEET_RESPONSIBLE.MODELS_EQUIPMENTS_PRICINGS (id, id_equipment, id_model, id_pricing) VALUES (4, 4, 4, 4);
 
 
-
-INSERT INTO APPCAR_ADMIN_APP.CHECK_IN (id, check_in_date, comments) VALUES (1, TO_DATE('2023-07-01', 'YYYY-MM-DD'), 'No issues');
-INSERT INTO APPCAR_ADMIN_APP.CHECK_IN (id, check_in_date, comments) VALUES (2, TO_DATE('2023-07-02', 'YYYY-MM-DD'), 'Scratch on left door');
-
-
-INSERT INTO APPCAR_ADMIN_APP.RETURNS (id, return_date, comments) VALUES (1, TO_DATE('2023-07-10', 'YYYY-MM-DD'), 'Returned on time');
-INSERT INTO APPCAR_ADMIN_APP.RETURNS (id, return_date, comments) VALUES (2, TO_DATE('2023-07-11', 'YYYY-MM-DD'), 'Delayed return for one day');
-
 INSERT INTO APPCAR_FLEET_RESPONSIBLE.VEHICLES (id, purchase_date, purchase_price, kilometrage, id_model_equipment, id_state)
 VALUES (1, TO_DATE('2020-01-01', 'YYYY-MM-DD'), 40000.00, 10000, 1, 1);
 INSERT INTO APPCAR_FLEET_RESPONSIBLE.VEHICLES (id, purchase_date, purchase_price, kilometrage, id_model_equipment, id_state)
 VALUES (2, TO_DATE('2019-05-01', 'YYYY-MM-DD'), 35000.00, 15000, 2, 2);
 
 
-INSERT INTO APPCAR_ADMIN_APP.BOOKINGS (id, starting_date, ending_date, is_canceled, is_running, is_closed, id_customer, id_vehicle, id_return, id_check_in)
-VALUES (1, TO_DATE('2023-07-01', 'YYYY-MM-DD'), TO_DATE('2023-07-10', 'YYYY-MM-DD'), 0, 0, 1, 1, 1, 1, 1);
-INSERT INTO APPCAR_ADMIN_APP.BOOKINGS (id, starting_date, ending_date, is_canceled, is_running, is_closed, id_customer, id_vehicle, id_return, id_check_in)
-VALUES (2, TO_DATE('2023-07-02', 'YYYY-MM-DD'), TO_DATE('2023-07-11', 'YYYY-MM-DD'), 0, 0, 1, 2, 2, 2, 2);
+INSERT INTO APPCAR_ADMIN_APP.BOOKINGS (id, starting_date, ending_date, is_canceled, is_running, is_closed, id_customer, id_vehicle)
+VALUES (1, TO_DATE('2023-07-01', 'YYYY-MM-DD'), TO_DATE('2023-07-10', 'YYYY-MM-DD'), 0, 0, 1, 1, 1);
+INSERT INTO APPCAR_ADMIN_APP.BOOKINGS (id, starting_date, ending_date, is_canceled, is_running, is_closed, id_customer, id_vehicle)
+VALUES (2, TO_DATE('2023-07-02', 'YYYY-MM-DD'), TO_DATE('2023-07-11', 'YYYY-MM-DD'), 0, 0, 1, 2, 2);
 
 INSERT INTO APPCAR_ADMIN_APP.INVOICES (id, total_price, delay_supplement, booking_price, distance_price, generated_date, is_paid, id_booking)
 VALUES (1, 5500.00, 0.00, 5000.00, 500.00, TO_DATE('2023-07-10', 'YYYY-MM-DD'), 1, 1);
+
+
+INSERT INTO APPCAR_ADMIN_APP.CHECK_IN (id, check_in_date, comments, id_booking) VALUES (1, TO_DATE('2023-07-01', 'YYYY-MM-DD'), 'No issues', 1);
+INSERT INTO APPCAR_ADMIN_APP.CHECK_IN (id, check_in_date, comments, id_booking) VALUES (2, TO_DATE('2023-07-02', 'YYYY-MM-DD'), 'Scratch on left door',2);
+
+
+INSERT INTO APPCAR_ADMIN_APP.RETURNS (id, return_date, comments, id_booking) VALUES (1, TO_DATE('2023-07-10', 'YYYY-MM-DD'), 'Returned on time',1);
+INSERT INTO APPCAR_ADMIN_APP.RETURNS (id, return_date, comments, id_booking) VALUES (2, TO_DATE('2023-07-11', 'YYYY-MM-DD'), 'Delayed return for one day',2);
 
 COMMIT;

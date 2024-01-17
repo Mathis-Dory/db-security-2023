@@ -6,6 +6,8 @@
 
 -- Connect to the PDB
 ALTER SESSION SET CONTAINER = orclpdb;
+-- If db is not opened
+ALTER DATABASE OPEN;
 
 -- Check if you are connected to the PDB
 SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
@@ -59,7 +61,7 @@ SELECT * FROM dba_ts_quotas WHERE tablespace_name LIKE 'USERS';
 
 -- Create the profile for all employees
 CREATE PROFILE appcar_profile_employee LIMIT
-    SESSIONS_PER_USER 1 -- 1 session
+    SESSIONS_PER_USER 3 -- 3 sessions
     CPU_PER_CALL 3000 -- 30 seconds threshold for the CPU
     IDLE_TIME 5 -- 5 minutes
     CONNECT_TIME 30 -- 30 minutes
@@ -79,7 +81,7 @@ ALTER USER appcar_hr_manager profile appcar_profile_employee;
 
 -- Create the profile for the admin
 CREATE PROFILE appcar_profile_admin LIMIT
-    SESSIONS_PER_USER 1 -- 1 session
+    SESSIONS_PER_USER 3 -- 3 sessions
     CPU_PER_CALL 500 -- 5 seconds trheshold for the CPU
     IDLE_TIME 3 -- 3 minutes
     CONNECT_TIME 30 -- 30 minutes
@@ -124,7 +126,7 @@ BEGIN
                              comment => 'This is the group for the rest of the users');
     END IF ;
 
-    -- static mappingsof the users to the consumers groups
+    -- static mappings of the users to the consumers groups
     -- Note: the users cannot be mapped to the group OTHERS_GROUPS
     DBMS_RESOURCE_MANAGER.set_consumer_group_mapping(DBMS_RESOURCE_MANAGER.oracle_user, 'appcar_admin_app', 'admin');
     DBMS_RESOURCE_MANAGER.set_consumer_group_mapping(DBMS_RESOURCE_MANAGER.oracle_user, 'appcar_hr_manager', 'mgmt');
@@ -150,11 +152,13 @@ BEGIN
      DBMS_RESOURCE_MANAGER.submit_pending_area();
 END;
 
-SELECT * FROM dba_rsrc_consumer_groups WHERE consumer_group = 'OTHER_GROUPS';
+SELECT * FROM dba_rsrc_consumer_groups WHERE CATEGORY = 'OTHER';
 
 CALL appcar_resource_plan();
 
 -- Check the plan if there is an error
 SELECT * FROM user_errors WHERE name = 'APPCAR_RESOURCE_PLAN';
+
+COMMIT;
 
 

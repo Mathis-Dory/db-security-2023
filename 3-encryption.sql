@@ -7,30 +7,17 @@
 -- Connect to the PDB
 ALTER SESSION SET CONTAINER = orclpdb;
 
+--+++++++ Encryption of data +++++++--
+-- Create the utils to encrypt and decrypt the passwords
+--+++++++ =============== +++++++--
+
+
 -- Create the table to store the encryption keys
 CREATE TABLE appcar_encryption_keys (
     id_keys     NUMBER PRIMARY KEY,
     key         RAW(16) NOT NULL,
     table_name  VARCHAR2(30) NOT NULL
 );
-
--- Create the procedure to encrypt the passwords
-CREATE OR REPLACE PROCEDURE appcar_encrypt_user_passwords AS
-  key_encrypt RAW(16);
-  operation_mode PLS_INTEGER;
-  cursor c is SELECT id, password FROM APPCAR_ADMIN_APP.users;
-  encrypted_password RAW(128);
-BEGIN
-  key_encrypt := dbms_crypto.randombytes(16);
-  INSERT INTO appcar_encryption_keys VALUES (1, key_encrypt, 'USERS');
-  operation_mode := dbms_crypto.encrypt_aes128 + dbms_crypto.pad_pkcs5 + dbms_crypto.chain_cbc;
-  FOR i IN c LOOP
-    encrypted_password := dbms_crypto.encrypt(utl_i18n.string_to_raw(i.password, 'AL32UTF8'), operation_mode, key_encrypt);
-    UPDATE APPCAR_ADMIN_APP.users SET password = encrypted_password WHERE id = i.id;
-  END LOOP;
-  COMMIT;
-END appcar_encrypt_user_passwords;
-/
 
 -- Create the functions to encrypt and decrypt the passwords
 CREATE OR REPLACE FUNCTION encrypt_using_aes(
@@ -63,10 +50,29 @@ BEGIN
 END;
 /
 
--- Test the encryption
-CALL appcar_encrypt_user_passwords();
-SELECT * FROM APPCAR_ADMIN_APP.users;
 
+--+++++++ Encryption procedures +++++++--
+-- Create the procedures to encrypt and decrypt the passwords
+--+++++++ ===================== +++++++--
+
+
+-- Create the procedure to encrypt the existing passwords
+CREATE OR REPLACE PROCEDURE appcar_encrypt_user_passwords AS
+  key_encrypt RAW(16);
+  operation_mode PLS_INTEGER;
+  cursor c is SELECT id, password FROM APPCAR_ADMIN_APP.users;
+  encrypted_password RAW(128);
+BEGIN
+  key_encrypt := dbms_crypto.randombytes(16);
+  INSERT INTO appcar_encryption_keys VALUES (1, key_encrypt, 'USERS');
+  operation_mode := dbms_crypto.encrypt_aes128 + dbms_crypto.pad_pkcs5 + dbms_crypto.chain_cbc;
+  FOR i IN c LOOP
+    encrypted_password := dbms_crypto.encrypt(utl_i18n.string_to_raw(i.password, 'AL32UTF8'), operation_mode, key_encrypt);
+    UPDATE APPCAR_ADMIN_APP.users SET password = encrypted_password WHERE id = i.id;
+  END LOOP;
+  COMMIT;
+END appcar_encrypt_user_passwords;
+/
 
 -- Procedure to decrypt the passwords
 CREATE OR REPLACE FUNCTION appcar_decrypt_user_password_by_id(p_user_id INT)
@@ -101,11 +107,6 @@ EXCEPTION
 END appcar_decrypt_user_password_by_id;
 /
 
-
--- Test the decryption (should return the password of the user with id 1 in clear but the password in the table should still be encrypted)
-SELECT appcar_decrypt_user_password_by_id(1) FROM dual;
-
-
 -- Procedure to encrypt a single password
 CREATE OR REPLACE FUNCTION appcar_encrypt_single_password(p_password VARCHAR2)
 RETURN RAW AS
@@ -121,6 +122,20 @@ BEGIN
 END appcar_encrypt_single_password;
 /
 
+
+-- Test the encryption procedure (should return all the encrypted passwords)
+CALL appcar_encrypt_user_passwords();
+SELECT * FROM APPCAR_ADMIN_APP.users;
+
+-- Test the decryption procedure (should return the password of the user with id 1 in clear but the password in the table should still be encrypted)
+SELECT appcar_decrypt_user_password_by_id(1) FROM dual;
+
+
+--+++++++ Encryption trigger +++++++--
+-- Create a trigger to encrypt the password before inserting or updating a user
+--+++++++ ================== +++++++--
+
+
 -- Trigger to encrypt the password before inserting or updating a user
 CREATE OR REPLACE TRIGGER appcar_encrypt_user_password_before_insert_or_update
 BEFORE INSERT OR UPDATE ON APPCAR_ADMIN_APP.users
@@ -135,4 +150,3 @@ COMMIT;
 INSERT INTO APPCAR_ADMIN_APP.users (id, name, surname, sex, birthdate, password, email, id_customer, id_employee) VALUES (99, 'ENCRYPTION', 'TEST', 'M', TO_DATE('1999-01-01', 'YYYY-MM-DD'), 'encrypt1234', 'trigger@encryption.sql', NULL, NULL);
 SELECT * FROM APPCAR_ADMIN_APP.users;
 ROLLBACK;
-
