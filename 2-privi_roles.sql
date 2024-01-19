@@ -38,7 +38,7 @@ SELECT * FROM DBA_SYS_PRIVS WHERE GRANTEE = 'APPCAR_ADMIN_APP';
 
 
 -- Grant the privileges to the admin user so he can create the users table with the references to the employees table
-GRANT REFERENCES ON APPCAR_HR_MANAGER.EMPLOYEES TO appcar_admin_app; -- CREATE THE TABLE FIRST IN THE TABLES SCRIPT (PART 1)
+GRANT REFERENCES ON APPCAR_ADMIN_APP.USERS TO APPCAR_HR_MANAGER; -- CREATE THE TABLE FIRST IN THE TABLES SCRIPT (PART 1)
 -- Grant the privileges to the fleet responsible user so he can create the admin can reference the states table to the vehicles table
 GRANT REFERENCES ON APPCAR_ADMIN_APP.STATES TO appcar_fleet_responsible; -- CREATE THE TABLE FIRST IN THE TABLES SCRIPT (PART 2)
 -- Grant the privileges to the admin user so he can create the bookings table with the references to the vehicles table
@@ -68,7 +68,7 @@ GRANT SELECT, INSERT ON APPCAR_ADMIN_APP.CHECK_IN TO appcar_employee_role;
 GRANT SELECT, INSERT ON APPCAR_ADMIN_APP.CUSTOMERS TO appcar_employee_role;
 -- Create a special view to prevent the employees from seeing the passwords
 CREATE OR REPLACE VIEW APPCAR_ADMIN_APP.USERS_MGMT_VIEW AS
-    SELECT id, name, surname, sex, birthdate, email, id_customer, id_employee FROM APPCAR_ADMIN_APP.USERS;
+    SELECT id, name, surname, sex, birthdate, email FROM APPCAR_ADMIN_APP.USERS;
 GRANT SELECT ON APPCAR_ADMIN_APP.USERS_MGMT_VIEW TO appcar_employee_role;
 GRANT SELECT ON APPCAR_ADMIN_APP.STATES TO appcar_employee_role;
 
@@ -77,7 +77,7 @@ GRANT SELECT ON APPCAR_ADMIN_APP.STATES TO appcar_fleet_role;
 GRANT SELECT, UPDATE ON APPCAR_ADMIN_APP.BOOKINGS TO appcar_fleet_role;
 
 -- Grant the privileges to the HR role according to the entity user matrix
-GRANT SELECT, UPDATE(id, name, surname, sex, birthdate, email, id_customer, id_employee)
+GRANT SELECT, UPDATE(id, name, surname, sex, birthdate, email)
     ON APPCAR_ADMIN_APP.USERS_MGMT_VIEW TO appcar_hr_role;
 GRANT INSERT, DELETE ON APPCAR_ADMIN_APP.USERS TO appcar_hr_role;
 

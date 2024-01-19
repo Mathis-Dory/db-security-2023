@@ -7,16 +7,20 @@
 -- Switch to the PDB
 ALTER SESSION SET CONTAINER = orclpdb;
 
-INSERT INTO APPCAR_ADMIN_APP.CUSTOMERS (id, license) VALUES (1, 'ABC123');
-INSERT INTO APPCAR_ADMIN_APP.CUSTOMERS (id, license) VALUES (2, 'XYZ456');
+INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email)
+VALUES (1, 'John', 'Doe', 'M', TO_DATE('1980-01-01', 'YYYY-MM-DD'), 'pass123', 'john.doe@example.com');
+INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email)
+VALUES (2, 'Jane', 'Smith', 'F', TO_DATE('1985-02-02', 'YYYY-MM-DD'), 'pass456', 'jane.smith@example.com');
+INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email)
+VALUES (3, 'Luck', 'Cena', 'M', TO_DATE('1966-01-12', 'YYYY-MM-DD'), 'pass789', 'luck123h@example.com');
+INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email)
+VALUES (4, 'Mario', 'Bross', 'M', TO_DATE('1999-12-01', 'YYYY-MM-DD'), 'pass101112', 'mario.bross@example.com');
 
-INSERT INTO APPCAR_HR_MANAGER.EMPLOYEES (id, department) VALUES (1, 'hr');
-INSERT INTO APPCAR_HR_MANAGER.EMPLOYEES (id, department) VALUES (2, 'commercial');
+INSERT INTO APPCAR_ADMIN_APP.CUSTOMERS (id, license, id_user) VALUES (1, 'ABC123', 3);
+INSERT INTO APPCAR_ADMIN_APP.CUSTOMERS (id, license, id_user) VALUES (2, 'XYZ456', 4);
 
-INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email, id_customer, id_employee)
-VALUES (1, 'John', 'Doe', 'M', TO_DATE('1980-01-01', 'YYYY-MM-DD'), 'pass123', 'john.doe@example.com', 1, NULL);
-INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email, id_customer, id_employee)
-VALUES (2, 'Jane', 'Smith', 'F', TO_DATE('1985-02-02', 'YYYY-MM-DD'), 'pass456', 'jane.smith@example.com', NULL, 1);
+INSERT INTO APPCAR_HR_MANAGER.EMPLOYEES (id, department, id_user) VALUES (1, 'hr', 1);
+INSERT INTO APPCAR_HR_MANAGER.EMPLOYEES (id, department, id_user) VALUES (2, 'commercial', 2);
 
 INSERT INTO APPCAR_ADMIN_APP.STATES (id, name) VALUES (1, 'Available');
 INSERT INTO APPCAR_ADMIN_APP.STATES (id, name) VALUES (2, 'Unavailable');

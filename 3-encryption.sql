@@ -147,6 +147,7 @@ END appcar_encrypt_user_password_before_insert_or_update;
 COMMIT;
 
 -- Test the trigger
-INSERT INTO APPCAR_ADMIN_APP.users (id, name, surname, sex, birthdate, password, email, id_customer, id_employee) VALUES (99, 'ENCRYPTION', 'TEST', 'M', TO_DATE('1999-01-01', 'YYYY-MM-DD'), 'encrypt1234', 'trigger@encryption.sql', NULL, NULL);
+SELECT * FROM APPCAR_ADMIN_APP.users;
+INSERT INTO APPCAR_ADMIN_APP.users (id, name, surname, sex, birthdate, password, email) VALUES (99, 'ENCRYPTION', 'TEST', 'M', TO_DATE('1999-01-01', 'YYYY-MM-DD'), 'encrypt1234', 'trigger@encryption.sql');
 SELECT * FROM APPCAR_ADMIN_APP.users;
 ROLLBACK;

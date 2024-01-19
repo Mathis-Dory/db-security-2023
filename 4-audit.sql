@@ -147,6 +147,10 @@ COMMIT;
 -- Test standard audit, trigger audit and policy audit
 --+++++++ =============== +++++++--
 
+-- Test Standard audit
+-- Create an employee (Execute it as HR Manager)
+
+
 
 -- Execute the procedure (Execute it as employee)
 CALL APPCAR_ADMIN_APP.appcar_proc_state(4,1);
