@@ -12,7 +12,7 @@ VALUES (1, 'John', 'Doe', 'M', TO_DATE('1980-01-01', 'YYYY-MM-DD'), 'pass123', '
 INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email)
 VALUES (2, 'Jane', 'Smith', 'F', TO_DATE('1985-02-02', 'YYYY-MM-DD'), 'pass456', 'jane.smith@example.com');
 INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email)
-VALUES (3, 'Luck', 'Cena', 'M', TO_DATE('1966-01-12', 'YYYY-MM-DD'), 'pass789', 'luck123h@example.com');
+VALUES (3, 'Luck', 'Cena', 'M', TO_DATE('1966-01-12', 'YYYY-MM-DD'), 'pass789', 'luck123@example.com');
 INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email)
 VALUES (4, 'Mario', 'Bross', 'M', TO_DATE('1999-12-01', 'YYYY-MM-DD'), 'pass101112', 'mario.bross@example.com');
 
@@ -69,11 +69,11 @@ INSERT INTO APPCAR_ADMIN_APP.INVOICES (id, total_price, delay_supplement, bookin
 VALUES (1, 5500.00, 0.00, 5000.00, 500.00, TO_DATE('2023-07-10', 'YYYY-MM-DD'), 1, 1);
 
 
-INSERT INTO APPCAR_ADMIN_APP.CHECK_IN (id, check_in_date, comments, id_booking) VALUES (1, TO_DATE('2023-07-01', 'YYYY-MM-DD'), 'No issues', 1);
-INSERT INTO APPCAR_ADMIN_APP.CHECK_IN (id, check_in_date, comments, id_booking) VALUES (2, TO_DATE('2023-07-02', 'YYYY-MM-DD'), 'Scratch on left door',2);
+INSERT INTO APPCAR_ADMIN_APP.CHECK_IN (id, check_in_date, comments, id_booking) VALUES (1, TO_DATE('2023-07-01 08:23:12', 'YYYY-MM-DD  HH24:MI:SS'), 'No issues', 1);
+INSERT INTO APPCAR_ADMIN_APP.CHECK_IN (id, check_in_date, comments, id_booking) VALUES (2, TO_DATE('2023-07-02 11:00:30', 'YYYY-MM-DD  HH24:MI:SS'), 'Scratch on left door',2);
 
 
-INSERT INTO APPCAR_ADMIN_APP.RETURNS (id, return_date, comments, id_booking) VALUES (1, TO_DATE('2023-07-10', 'YYYY-MM-DD'), 'Returned on time',1);
-INSERT INTO APPCAR_ADMIN_APP.RETURNS (id, return_date, comments, id_booking) VALUES (2, TO_DATE('2023-07-11', 'YYYY-MM-DD'), 'Delayed return for one day',2);
+INSERT INTO APPCAR_ADMIN_APP.RETURNS (id, return_date, comments, id_booking) VALUES (1, TO_DATE('2023-07-10 22:00:00', 'YYYY-MM-DD  HH24:MI:SS'), 'Returned on time',1);
+
 
 COMMIT;

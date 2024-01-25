@@ -77,10 +77,11 @@ CREATE TABLE APPCAR_AUDIT_LOG_RETURNS (
     id_audit NUMBER PRIMARY KEY,
     action_user VARCHAR2(30),
     action_type VARCHAR2(50),
-    action_timestamp DATE,
+    action_timestamp TIMESTAMP,
     action_table VARCHAR2(50),
     action_description VARCHAR2(255)
 );
+
 
 -- Trigger for RETURN Table
 CREATE OR REPLACE TRIGGER appcar_audit_trigger_returns
@@ -91,16 +92,16 @@ DECLARE
     v_action_type VARCHAR2(6);
 BEGIN
     IF INSERTING THEN
-        v_action_description := 'INSERTED ID ' || :NEW.id || ', Date: ' || TO_DATE(:NEW.return_date, 'YYYY-MM-DD') || ', Comments: ' || :NEW.comments || ', Booking ID: ' || :NEW.id_booking;
+        v_action_description := 'INSERTED ID ' || :NEW.id || ', Date: ' || TO_CHAR(:NEW.return_date, 'YYYY-MM-DD  HH24:MI:SS') || ', Comments: ' || :NEW.comments || ', Booking ID: ' || :NEW.id_booking;
         v_action_type := 'INSERT';
     ELSIF UPDATING THEN
         v_action_description := 'UPDATED ID ' || :OLD.id ||
-                                ', from Date: ' || TO_DATE(:OLD.return_date, 'YYYY-MM-DD') || ' to ' || TO_DATE(:NEW.return_date, 'YYYY-MM-DD') ||
+                                ', from Date: ' ||  TO_CHAR(:OLD.return_date, 'YYYY-MM-DD  HH24:MI:SS') || ' to ' ||TO_CHAR(:NEW.return_date, 'YYYY-MM-DD  HH24:MI:SS') ||
                                 ', from Comments: ' || :OLD.comments || ' to ' || :NEW.comments ||
                                 ', from Booking ID: ' || :OLD.id_booking || ' to ' || :NEW.id_booking;
         v_action_type := 'UPDATE';
     ELSIF DELETING THEN
-        v_action_description := 'DELETED ID ' || :OLD.id || ', Date: ' || TO_DATE(:OLD.return_date, 'YYYY-MM-DD') || ', Comments: ' || :OLD.comments || ', Booking ID: ' || :OLD.id_booking;
+        v_action_description := 'DELETED ID ' || :OLD.id || ', Date: ' || TO_CHAR(:OLD.return_date, 'YYYY-MM-DD  HH24:MI:SS') || ', Comments: ' || :OLD.comments || ', Booking ID: ' || :OLD.id_booking;
         v_action_type := 'DELETE';
     END IF;
 
@@ -117,23 +118,13 @@ END;
 --+++++++ =============== +++++++--
 CREATE OR REPLACE PROCEDURE appcar_proc_audit_policy AS
 BEGIN
-    -- Add a policy to audit updates on the CHECK_IN table
     DBMS_FGA.ADD_POLICY(
         object_schema   => 'APPCAR_ADMIN_APP',
         object_name     => 'CHECK_IN',
         policy_name     => 'audit_check_in_updates',
-        audit_condition => 'EXISTS (SELECT 1 FROM APPCAR_ADMIN_APP.RETURNS WHERE id_booking = CHECK_IN.id_booking)',  -- Check if a return already exists for the booking
         audit_column    => 'comments',
-        enable          => FALSE,
+        enable          => TRUE,
         statement_types => 'UPDATE'
-    );
-END;
-/
-BEGIN;
-    DBMS_FGA.ENABLE_POLICY(
-        object_schema   => 'APPCAR_ADMIN_APP',
-        object_name     => 'CHECK_IN',
-        policy_name     => 'audit_check_in_updates'
     );
 END;
 /
@@ -147,28 +138,63 @@ COMMIT;
 -- Test standard audit, trigger audit and policy audit
 --+++++++ =============== +++++++--
 
--- Test Standard audit
--- Create an employee (Execute it as HR Manager)
+----- Test Standard audit -----
+
+-- Example 1 with employee table
+-- Create first a test user (Execute it as Admin)
+INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email) VALUES (5,'ANONYMOUS', 'TEST', 'M', TO_DATE('2001-06-14', 'YYYY-MM-DD'), 'test', 'test@test.ro');
+COMMIT;
+-- Create an employee and then delete it (Execute it as HR Manager)
+INSERT INTO APPCAR_HR_MANAGER.EMPLOYEES (department, id_user) VALUES ('administrative', 5);
+COMMIT;
+DELETE FROM APPCAR_HR_MANAGER.EMPLOYEES WHERE id_user = 5;
+COMMIT;
 
 
+-- Example 2 with booking table on fail
+-- Use the following query with the HR manager user to fail it
+SELECT * FROM APPCAR_ADMIN_APP.BOOKINGS WHERE id = 1;
+
+
+-- Check the standard audit log
+SELECT OBJ$NAME, SQLTEXT, NTIMESTAMP# FROM aud$;
+-- Delete all logs
+-- DELETE FROM aud$;
+COMMIT;
+
+----- Test trigger audit -----
 
 -- Execute the procedure (Execute it as employee)
+SELECT * FROM APPCAR_FLEET_RESPONSIBLE.VEHICLES WHERE id = 1;
 CALL APPCAR_ADMIN_APP.appcar_proc_state(4,1);
--- Insert a new return (Execute it as employee)
--- TODO: CHECK
-INSERT INTO APPCAR_ADMIN_APP.RETURNS (return_date, comments, id_booking) VALUES (TO_DATE('2024-01-01', 'YYYY-MM-DD'), 'Returned on time',1);
-
 COMMIT;
--- Check the audit log
+SELECT * FROM APPCAR_FLEET_RESPONSIBLE.VEHICLES WHERE id = 1;
+ROLLBACK;
+-- Insert a new return (Execute it as employee)
+INSERT INTO APPCAR_ADMIN_APP.RETURNS (return_date, comments, id_booking) VALUES (TO_DATE('2024-01-01 18:00:55', 'YYYY-MM-DD  HH24:MI:SS'), 'Returned on time',2);
+COMMIT;
+-- Update the return (Execute it as employee)
+UPDATE APPCAR_ADMIN_APP.RETURNS SET return_date = TO_DATE('2024-01-02 05:30:22', 'YYYY-MM-DD  HH24:MI:SS'), comments = 'Returned late' WHERE id = 99;
+COMMIT;
+-- Delete the return (Execute it as employee)
+DELETE FROM APPCAR_ADMIN_APP.RETURNS WHERE id = 99;
+COMMIT;
+
+
+-- Check the audit triggers
 SELECT * FROM APPCAR_AUDIT_LOG_PROC_STATES;
 SELECT* FROM APPCAR_AUDIT_LOG_RETURNS;
-ROLLBACK;
+-- DELETE FROM APPCAR_AUDIT_LOG_PROC_STATES;
+-- DELETE FROM APPCAR_AUDIT_LOG_RETURNS;
 
--- Test the audit policy
--- Update the check-in table
+
+----- Test audit policy -----
+
+-- Update the check-in table (Execute it as employee)
 -- TODO: DEBUG
-UPDATE APPCAR_ADMIN_APP.CHECK_IN SET comments = 'jojo' WHERE id = 1;
+SELECT * FROM APPCAR_ADMIN_APP.CHECK_IN;
+UPDATE APPCAR_ADMIN_APP.CHECK_IN SET comments = 'Trunk is damaged' WHERE id = 1;
 COMMIT;
 SELECT * FROM APPCAR_ADMIN_APP.CHECK_IN;
-SELECT * FROM DBA_FGA_AUDIT_TRAIL WHERE  object_name = 'CHECK_IN';
+SELECT * FROM DBA_FGA_AUDIT_TRAIL;
 ROLLBACK;

@@ -7,9 +7,7 @@
 ALTER SESSION SET CONTAINER = orclpdb;
 SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
 
-
 -- Create tables for the project
-
 
  -- ==================== PART 1 ====================
 
