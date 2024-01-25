@@ -39,11 +39,25 @@ END appcar_masking_pkg;
 /
 
 
-CREATE OR REPLACE DIRECTORY direxp_data AS 'C:\Users\mathi\Bureau\masking';
+CREATE OR REPLACE DIRECTORY direxp_data AS 'C:\Users\Public\dbsec\masking';
 GRANT READ, WRITE ON DIRECTORY direxp_data TO appcar_admin_app;
 
-select appcar_masking_pkg.mask_email('test@test.rom') from dual;
-select appcar_masking_pkg.mask_license('FR4578961123') from dual;
+SELECT
+    appcar_masking_pkg.mask_email('test@test.rom') AS masked_email,
+    appcar_masking_pkg.mask_license('FR4578961123') AS masked_license
+FROM dual;
+
 -- Run it in regular terminal to export
+-- export
 --expdp appcar_admin_app/admin1234@orclpdb schemas=appcar_admin_app directory=DIREXP_DATA dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_data=appcar_admin_app.users.email:appcar_masking_pkg.mask_email remap_data=appcar_admin_app.customers.license:appcar_masking_pkg.mask_license
+-- import
 --impdp appcar_admin_app/admin1234@orclpdb directory=DIREXP_DATA dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_schema=appcar_admin_app:appcar_admin_app_masked
+-- if error add the following line in the tnsnames.ora file
+-- ORCLPDB =
+--  (DESCRIPTION =
+--    (ADDRESS = (PROTOCOL = TCP)(HOST = DESKTOP-HEJLMNP)(PORT = 1521))
+--    (CONNECT_DATA =
+--      (SERVER = DEDICATED)
+--      (SERVICE_NAME = orclpdb)
+--    )
+--  )
