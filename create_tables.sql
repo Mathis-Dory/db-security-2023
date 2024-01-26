@@ -4,7 +4,7 @@
 -- Group 510
 
 -- Switch to the PDB
-ALTER SESSION SET CONTAINER = orclpdb;
+ALTER SESSION SET CONTAINER = ORCLPDB;
 SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
 
 -- Create tables for the project

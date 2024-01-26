@@ -5,7 +5,7 @@
 -- Group 510
 
 -- Switch to the PDB
-ALTER SESSION SET CONTAINER = orclpdb;
+ALTER SESSION SET CONTAINER = ORCLPDB;
 
 INSERT INTO APPCAR_ADMIN_APP.USERS (id, name, surname, sex, birthdate, password, email)
 VALUES (1, 'John', 'Doe', 'M', TO_DATE('1980-01-01', 'YYYY-MM-DD'), 'pass123', 'john.doe@example.com');

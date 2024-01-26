@@ -5,7 +5,7 @@
 -- Group 510
 
 -- Connect to the PDB
-ALTER SESSION SET CONTAINER = orclpdb;
+ALTER SESSION SET CONTAINER = ORCLPDB;
 -- If db is not opened
 ALTER DATABASE OPEN;
 

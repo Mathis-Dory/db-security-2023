@@ -16,7 +16,7 @@ ALTER SYSTEM SET audit_trail=db,extended SCOPE=SPFILE;
 -- This part ends here. Restart the database before proceeding.
 
 -- Connect to the PDB
-ALTER SESSION SET CONTAINER = orclpdb;
+ALTER SESSION SET CONTAINER = ORCLPDB;
 
 -- OPEN the PDB if closed
 ALTER PLUGGABLE DATABASE OPEN;

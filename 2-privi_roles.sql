@@ -5,7 +5,7 @@
 -- Group 510
 
 -- Switch to the PDB
-ALTER SESSION SET CONTAINER = orclpdb;
+ALTER SESSION SET CONTAINER = ORCLPDB;
 -- If the DB is not open, open it
  ALTER DATABASE OPEN;
 

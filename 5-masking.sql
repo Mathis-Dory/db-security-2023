@@ -4,7 +4,7 @@
 -- Date: 2023-01-10
 -- Group 510
 
-ALTER SESSION SET CONTAINER = orclpdb;
+ALTER SESSION SET CONTAINER = ORCLPDB;
 
 CREATE OR REPLACE PACKAGE appcar_masking_pkg IS
     FUNCTION mask_email(email VARCHAR2) RETURN VARCHAR2;
@@ -39,7 +39,7 @@ END appcar_masking_pkg;
 /
 
 
-CREATE OR REPLACE DIRECTORY direxp_data AS 'C:\Users\Public\dbsec\masking';
+CREATE OR REPLACE DIRECTORY direxp_data AS '/home/oracle/masked_data/';
 GRANT READ, WRITE ON DIRECTORY direxp_data TO appcar_admin_app;
 
 SELECT
@@ -49,15 +49,6 @@ FROM dual;
 
 -- Run it in regular terminal to export
 -- export
---expdp appcar_admin_app/admin1234@orclpdb schemas=appcar_admin_app directory=DIREXP_DATA dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_data=appcar_admin_app.users.email:appcar_masking_pkg.mask_email remap_data=appcar_admin_app.customers.license:appcar_masking_pkg.mask_license
+--expdp appcar_admin_app/admin1234@ORCLPDB schemas=appcar_admin_app directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_data=appcar_admin_app.users.email:appcar_masking_pkg.mask_email remap_data=appcar_admin_app.customers.license:appcar_masking_pkg.mask_license
 -- import
---impdp appcar_admin_app/admin1234@orclpdb directory=DIREXP_DATA dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_schema=appcar_admin_app:appcar_admin_app_masked
--- if error add the following line in the tnsnames.ora file
--- ORCLPDB =
---  (DESCRIPTION =
---    (ADDRESS = (PROTOCOL = TCP)(HOST = DESKTOP-HEJLMNP)(PORT = 1521))
---    (CONNECT_DATA =
---      (SERVER = DEDICATED)
---      (SERVICE_NAME = orclpdb)
---    )
---  )
+--impdp appcar_admin_app/admin1234@ORCLPDB directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_schema=appcar_admin_app:appcar_admin_app_masked

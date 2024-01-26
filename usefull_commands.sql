@@ -13,7 +13,7 @@ SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
 SELECT name, open_mode FROM v$pdbs;
 
 -- Set the current container to the pluggable database
-ALTER SESSION SET CONTAINER = orclpdb;
+ALTER SESSION SET CONTAINER = ORCLPDB;
 -- Set the current container to the root container
 ALTER SESSION SET CONTAINER = CDB$ROOT;
 

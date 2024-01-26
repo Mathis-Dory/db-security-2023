@@ -1,4 +1,10 @@
-alter session set container = orclpdb;
+-- The following script is used to create security context
+-- Run this script from the CDB with the SYS user
+-- Author: Mathis Dory
+-- Date: 2023-01-10
+-- Group 510
+
+alter session set container = ORCLPDB;
 
 CREATE CONTEXT appcar_ctx USING appcar_proc_ctx;
 
