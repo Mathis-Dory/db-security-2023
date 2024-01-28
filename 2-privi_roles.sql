@@ -137,10 +137,12 @@ GRANT EXECUTE ON APPCAR_ADMIN_APP.appcar_proc_state TO appcar_employee_role;
 GRANT SELECT, UPDATE ON APPCAR_FLEET_RESPONSIBLE.VEHICLES TO APPCAR_ADMIN_APP;
 
 COMMIT;
+
 -- Test the procedure using a console within the employee_1 user (Use the insert sample data script first)
 CALL APPCAR_ADMIN_APP.appcar_proc_state(3,1);
 SELECT * FROM APPCAR_FLEET_RESPONSIBLE.VEHICLES WHERE id = 1;
 ROLLBACK;
 SELECT * FROM APPCAR_FLEET_RESPONSIBLE.VEHICLES WHERE id = 1;
 
-
+-- Test the view (run with an employee user)
+SELECT * FROM APPCAR_ADMIN_APP.USERS_MGMT_VIEW;

@@ -39,14 +39,22 @@ END appcar_masking_pkg;
 /
 
 
+-- Set the directory for the export & grant permissions
 CREATE OR REPLACE DIRECTORY direxp_data AS '/home/oracle/masked_data/';
 GRANT READ, WRITE ON DIRECTORY direxp_data TO appcar_admin_app;
+
+--+++++++ Test masking +++++++--
+-- Call the function to mask the email
+-- Call the function to mask the driving license
+-- Export and Import masked data
+--+++++++ =============== +++++++--
 
 SELECT
     appcar_masking_pkg.mask_email('test@test.rom') AS masked_email,
     appcar_masking_pkg.mask_license('FR4578961123') AS masked_license
 FROM dual;
 
+-- TODO: TEST on Windows
 -- Run it in regular terminal to export
 -- export
 --expdp appcar_admin_app/admin1234@ORCLPDB schemas=appcar_admin_app directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_data=appcar_admin_app.users.email:appcar_masking_pkg.mask_email remap_data=appcar_admin_app.customers.license:appcar_masking_pkg.mask_license

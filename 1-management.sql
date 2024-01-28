@@ -12,6 +12,14 @@ ALTER DATABASE OPEN;
 -- Check if you are connected to the PDB
 SELECT SYS_CONTEXT('USERENV', 'CON_NAME') FROM DUAL;
 
+-- Set the time zone
+
+ALTER SESSION SET TIME_ZONE = 'Europe/Bucharest';
+-- Restart the database
+-- SHUTDOWN IMMEDIATE;
+-- STARTUP;
+SELECT CURRENT_TIMESTAMP FROM dual;
+
 --+++++++ Create the users +++++++--
 
 -- Create the admin user of the application, the password expire is used to force the user to change the password at the first login
