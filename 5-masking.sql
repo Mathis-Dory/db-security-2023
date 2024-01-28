@@ -68,12 +68,12 @@ GRANT READ, WRITE ON DIRECTORY direxp_data TO appcar_admin_app;
 --+++++++ =============== +++++++--
 
 SELECT
-    APPCAR_ADMIN_APP.appcar_masking_pkg.mask_email('testtes123t@gmail.ro') AS masked_email,
-    APPCAR_ADMIN_APP.appcar_masking_pkg.mask_license('FR4578961123') AS masked_license
+    APPCAR_ADMIN_APP.appcar_masking_pkg.mask_email('mario.bross@example.com') AS masked_email,
+    APPCAR_ADMIN_APP.appcar_masking_pkg.mask_license('ABC123') AS masked_license
 FROM dual;
 
 -- Run it in regular terminal to export
--- expdp appcar_admin_app/admin1234@ORCLPDB schemas=appcar_admin_app directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_data=appcar_admin_app.users.email:appcar_masking_pkg.mask_email remap_data=appcar_admin_app.customers.license:appcar_masking_pkg.mask_license
+-- expdp appcar_admin_app/admin1234@ORCLPDB tables=users,customers directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_data=users.email:appcar_masking_pkg.mask_email remap_data=customers.license:appcar_masking_pkg.mask_license
 
 -- Import
--- impdp appcar_admin_app/admin1234@ORCLPDB directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_schema=appcar_admin_app:appcar_admin_app_masked
+-- impdp appcar_admin_app/admin1234@ORCLPDB directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp tables=users,customers remap_table=users:users_masked remap_table=customers:customers_masked

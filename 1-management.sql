@@ -90,7 +90,7 @@ ALTER USER appcar_hr_manager profile appcar_profile_employee;
 -- Create the profile for the admin
 CREATE PROFILE appcar_profile_admin LIMIT
     SESSIONS_PER_USER 3 -- 3 sessions
-    CPU_PER_CALL 500 -- 5 seconds trheshold for the CPU
+    CPU_PER_CALL UNLIMITED -- had to use unlimited for the export of data
     IDLE_TIME 3 -- 3 minutes
     CONNECT_TIME 30 -- 30 minutes
     PASSWORD_LIFE_TIME 30 -- 1 months
