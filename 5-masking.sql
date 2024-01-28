@@ -54,9 +54,8 @@ SELECT
     appcar_masking_pkg.mask_license('FR4578961123') AS masked_license
 FROM dual;
 
--- TODO: TEST on Windows
 -- Run it in regular terminal to export
--- export
---expdp appcar_admin_app/admin1234@ORCLPDB schemas=appcar_admin_app directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_data=appcar_admin_app.users.email:appcar_masking_pkg.mask_email remap_data=appcar_admin_app.customers.license:appcar_masking_pkg.mask_license
--- import
---impdp appcar_admin_app/admin1234@ORCLPDB directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_schema=appcar_admin_app:appcar_admin_app_masked
+-- expdp appcar_admin_app/admin1234@ORCLPDB schemas=appcar_admin_app directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_data=appcar_admin_app.users.email:appcar_masking_pkg.mask_email remap_data=appcar_admin_app.customers.license:appcar_masking_pkg.mask_license
+
+-- Import
+-- impdp appcar_admin_app/admin1234@ORCLPDB directory=direxp_data dumpfile=USERS_CUSTOMERS_EXPORT.dmp remap_schema=appcar_admin_app:appcar_admin_app_masked
