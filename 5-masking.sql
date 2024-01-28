@@ -6,21 +6,39 @@
 
 ALTER SESSION SET CONTAINER = ORCLPDB;
 
-CREATE OR REPLACE PACKAGE appcar_masking_pkg IS
+CREATE OR REPLACE PACKAGE APPCAR_ADMIN_APP.appcar_masking_pkg IS
     FUNCTION mask_email(email VARCHAR2) RETURN VARCHAR2;
     FUNCTION mask_license(license VARCHAR2) RETURN VARCHAR2;
 END;
 /
 
-CREATE OR REPLACE PACKAGE BODY appcar_masking_pkg IS
+CREATE OR REPLACE PACKAGE BODY APPCAR_ADMIN_APP.appcar_masking_pkg IS
 
     -- Masking function for email
-     FUNCTION mask_email(email VARCHAR2) RETURN VARCHAR2 IS
-        v_masked_email VARCHAR2(100);
+ FUNCTION mask_email(email VARCHAR2) RETURN VARCHAR2 IS
+        v_username_part VARCHAR2(100);
+        v_domain_part VARCHAR2(100);
+        v_masked_username VARCHAR2(100);
+        v_masked_domain VARCHAR2(100);
+        v_tld VARCHAR2(10);
     BEGIN
-        -- Mask everything except the first two characters of the first part and the domain extension
-        v_masked_email := REGEXP_REPLACE(email, '(\w{2})\w*@(\w*)\.(\w+)', '\1**@***.\3');
-        RETURN v_masked_email;
+        -- Extract the first two characters of the username part
+        v_username_part := REGEXP_SUBSTR(email, '([^\@]{2})');
+
+        -- Extract the domain part without TLD
+        v_domain_part := REGEXP_SUBSTR(email, '@([^\.\@]+)\.', 1, 1, NULL, 1);
+
+        -- Extract the TLD
+        v_tld := REGEXP_SUBSTR(email, '(\.\w+)$');
+
+        -- Mask the username part, preserving the first two characters
+        v_masked_username := v_username_part || RPAD('*', LENGTH(email) - LENGTH(v_domain_part) - LENGTH(v_tld) - 3, '*');
+
+        -- Mask the domain part dynamically
+        v_masked_domain := RPAD('*', LENGTH(v_domain_part), '*') || v_tld;
+
+        -- Concatenate the masked parts
+        RETURN v_masked_username || '@' || v_masked_domain;
     END mask_email;
 
 
@@ -40,7 +58,7 @@ END appcar_masking_pkg;
 
 
 -- Set the directory for the export & grant permissions
-CREATE OR REPLACE DIRECTORY direxp_data AS '/home/oracle/masked_data/';
+CREATE OR REPLACE DIRECTORY direxp_data AS 'C:\Users\Public\dbsec\masking';
 GRANT READ, WRITE ON DIRECTORY direxp_data TO appcar_admin_app;
 
 --+++++++ Test masking +++++++--
@@ -50,8 +68,8 @@ GRANT READ, WRITE ON DIRECTORY direxp_data TO appcar_admin_app;
 --+++++++ =============== +++++++--
 
 SELECT
-    appcar_masking_pkg.mask_email('test@test.rom') AS masked_email,
-    appcar_masking_pkg.mask_license('FR4578961123') AS masked_license
+    APPCAR_ADMIN_APP.appcar_masking_pkg.mask_email('testtes123t@gmail.ro') AS masked_email,
+    APPCAR_ADMIN_APP.appcar_masking_pkg.mask_license('FR4578961123') AS masked_license
 FROM dual;
 
 -- Run it in regular terminal to export
