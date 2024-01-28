@@ -145,6 +145,7 @@ ROLLBACK;
 -- Fourth is the mitigate version of the procedure with SQL injection (Should not display anything)
 --+++++++ =============== +++++++--
 
+-- Execute the following statements with the appcar_admin_app user
 CALL APPCAR_ADMIN_APP.get_customer_bookings('Luck');
 CALL APPCAR_ADMIN_APP.get_customer_bookings('Nonexistent'' UNION SELECT ''EMAIL: '', email , ''PASSWORD: '', password, 0, DATE ''1970-01-01'', DATE ''1970-01-01'', 0.0 FROM APPCAR_ADMIN_APP.USERS --');
 
