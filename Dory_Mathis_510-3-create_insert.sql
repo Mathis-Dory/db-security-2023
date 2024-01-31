@@ -1,12 +1,12 @@
 -- ===========================
 -- WARNING: respect following order to run scripts
--- 1. Dory_Mathis_510-identity_resource_mgmt.sql
--- 2. Dory_Mathis_510-privs_roles.sql
--- 3. Dory_Mathis_510-create_insert.sql
--- 4. Dory_Mathis_510-encryption.sql
--- 5. Dory_Mathis_510-audit.sql
--- 6. Dory_Mathis_510-application_security.sql
--- 7. Dory_Mathis_510-data_masking.sql
+-- 1. Dory_Mathis_510-1-identity_resource_mgmt.sql
+-- 2. Dory_Mathis_510-2-privs_roles.sql
+-- 3. Dory_Mathis_510-3-create_insert.sql
+-- 4. Dory_Mathis_510-4-encryption.sql
+-- 5. Dory_Mathis_510-5-audit.sql
+-- 6. Dory_Mathis_510-6-application_security.sql
+-- 7. Dory_Mathis_510-7-data_masking.sql
 -- ===========================
 
 -- The following script is run by the user appcar_admin_app in the PDB
