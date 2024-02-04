@@ -25,3 +25,15 @@ SELECT * FROM USER_ERRORS WHERE NAME = 'NAME PROCEDURE' ORDER BY SEQUENCE;
 
 -- Enable output
 BEGIN DBMS_OUTPUT.ENABLE; END;
+
+-- Start Collima on Mac M1
+colima start --arch x86_64 --memory 4 --network-address
+
+-- Start the container
+docker start dbsec
+
+-- Check logs
+docker logs -f dbsec
+
+-- Connect to the container
+docker exec -ti dbsec /bin/bash
